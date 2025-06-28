@@ -80,6 +80,9 @@ export class Input extends Container
     /** Fires every time input string is changed. */
     onChange: Signal<(text: string) => void>;
 
+    /** Fires when enter key pressed while focused. */
+    onSubmit: Signal<(text: string) => void>;
+
     /** Top side padding */
     paddingTop = 0;
 
@@ -137,6 +140,7 @@ export class Input extends Container
 
         this.onEnter = new Signal();
         this.onChange = new Signal();
+        this.onSubmit = new Signal();
 
         Ticker.shared.add((ticker) => this.update(ticker.deltaTime));
 
@@ -177,9 +181,13 @@ export class Input extends Container
         {
             this._delete();
         }
-        else if (key === 'Escape' || key === 'Enter')
+        else if (key === 'Escape')
         {
             this.stopEditing();
+        }
+        else if (key === 'Enter')
+        {
+            this.submit();
         }
         else if (key.length === 1)
         {
@@ -237,6 +245,12 @@ export class Input extends Container
         this.value = options.value ?? '';
 
         this.align();
+    }
+
+    focus()
+    {
+        this.activation = true;
+        this.handleActivation();
     }
 
     set bg(bg: ViewType)
@@ -434,6 +448,12 @@ export class Input extends Container
         this.align();
 
         this.onEnter.emit(this.value);
+    }
+
+    protected submit(): void
+    {
+        this.stopEditing();
+        this.onSubmit.emit(this.value);
     }
 
     protected update(dt: number): void
