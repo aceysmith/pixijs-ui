@@ -33,7 +33,7 @@
         "docs": "xs docs && npm run storybook:build",
         "lint": "xs lint --max-warnings 0",
         "lint:fix": "xs lint --fix",
-        "prepare": "husky install",
+        "prepare": "xs build",
         "release": "npm i && xs bump,build,docs,publish,git-push",
         "serve": "xs serve",
         "storybook": "storybook dev -p 6006",
@@ -64,7 +64,6 @@
         "pixi.js": "^8.6.2"
     },
     "dependencies": {
-        "@pixi/ui": "github:aceysmith/pixijs-ui#input-enhancements",
         "tweedle.js": "^2.1.0",
         "typed-signals": "^2.5.0"
     },

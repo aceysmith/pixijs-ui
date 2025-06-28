@@ -69,7 +69,7 @@ export class Input extends Container
     protected input: HTMLInputElement;
 
     protected handleActivationBinding = this.handleActivation.bind(this);
-    protected onKeyUpBinding = this.onKeyUp.bind(this);
+    protected onKeyDownBinding = this.onKeyDown.bind(this);
     protected stopEditingBinding = this.stopEditing.bind(this);
     protected onInputBinding = this.onInput.bind(this);
     protected onPasteBinding = this.onPaste.bind(this);
@@ -80,7 +80,7 @@ export class Input extends Container
     /** Fires every time input string is changed. */
     onChange: Signal<(text: string) => void>;
 
-    /** Fires when enter key pressed while focused. */
+    /** Fires when enter key pressed while editing. */
     onSubmit: Signal<(text: string) => void>;
 
     /** Top side padding */
@@ -159,7 +159,7 @@ export class Input extends Container
         this.lastInputData = e.data;
     }
 
-    protected onKeyUp(e: KeyboardEvent)
+    protected onKeyDown(e: KeyboardEvent)
     {
         const key = e.key;
 
@@ -187,7 +187,8 @@ export class Input extends Container
         }
         else if (key === 'Enter')
         {
-            this.submit();
+            this.stopEditing();
+            this.onSubmit.emit(this.value);
         }
         else if (key.length === 1)
         {
@@ -365,7 +366,7 @@ export class Input extends Container
         if (this.input)
         {
             this.input.removeEventListener('blur', this.stopEditingBinding);
-            this.input.removeEventListener('keydown', this.onKeyUpBinding);
+            this.input.removeEventListener('keydown', this.onKeyDownBinding);
             this.input.removeEventListener('input', this.onInputBinding as EventListener);
             this.input.removeEventListener('paste', this.onPasteBinding);
 
@@ -404,7 +405,7 @@ export class Input extends Container
         }
 
         input.addEventListener('blur', this.stopEditingBinding);
-        input.addEventListener('keydown', this.onKeyUpBinding);
+        input.addEventListener('keydown', this.onKeyDownBinding);
         input.addEventListener('input', this.onInputBinding as EventListener);
         input.addEventListener('paste', this.onPasteBinding);
 
@@ -448,12 +449,6 @@ export class Input extends Container
         this.align();
 
         this.onEnter.emit(this.value);
-    }
-
-    protected submit(): void
-    {
-        this.stopEditing();
-        this.onSubmit.emit(this.value);
     }
 
     protected update(dt: number): void
