@@ -377,6 +377,11 @@ export class Input extends Container
 
         const input: HTMLInputElement = document.createElement('input');
 
+        input.autocapitalize = 'none';
+        input.setAttribute('autocorrect', 'off');
+        input.spellcheck = false;
+        input.autocomplete = 'off';
+
         document.body.appendChild(input);
 
         input.style.position = 'fixed';
